@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Президент — Симулятор государства</title>
+
+<style>
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    font-family:Arial, sans-serif;
+    background:#080b10;
+    color:#fff;
+}
+
+button,input{
+    font:inherit;
+}
+
+header{
+    background:linear-gradient(135deg,#111827,#182335);
+    border-bottom:1px solid #263244;
+    padding:18px 22px;
+    position:sticky;
+    top:0;
+    z-index:10;
+}
+
+.header-inner{
+    max-width:1200px;
+    margin:auto;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:15px;
+}
+
+.logo{
+    font-size:22px;
+    font-weight:bold;
+}
+
+.logo span{
+    color:#60a5fa;
+}
+
+.day{
+    background:#111827;
+    border:1px solid #334155;
+    padding:9px 13px;
+    border-radius:10px;
+    font-size:14px;
+}
+
+.container{
+    max-width:1200px;
+    margin:auto;
+    padding:20px;
+}
+
+.welcome{
+    background:linear-gradient(135deg,#172033,#0f172a);
+    border:1px solid #29364a;
+    border-radius:18px;
+    padding:25px;
+    margin-bottom:20px;
+}
+
+.welcome h1{
+    margin:0 0 8px;
+    font-size:30px;
+}
+
+.welcome p{
+    margin:0;
+    color:#aab6c7;
+}
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:12px;
+    margin-bottom:20px;
+}
+
+.stat{
+    background:#10151f;
+    border:1px solid #273244;
+    border-radius:15px;
+    padding:17px;
+}
+
+.stat-name{
+    color:#94a3b8;
+    font-size:13px;
+    margin-bottom:8px;
+}
+
+.stat-value{
+    font-size:24px;
+    font-weight:bold;
+}
+
+.stat-small{
+    color:#64748b;
+    font-size:12px;
+    margin-top:5px;
+}
+
+.layout{
+    display:grid;
+    grid-template-columns:1.5fr 1fr;
+    gap:18px;
+}
+
+.card{
+    background:#10151f;
+    border:1px solid #273244;
+    border-radius:17px;
+    padding:20px;
+    margin-bottom:18px;
+}
+
+.card h2{
+    margin:0 0 15px;
+    font-size:19px;
+}
+
+.event{
+    background:#151c28;
+    border:1px solid #29364a;
+    border-radius:13px;
+    padding:16px;
+}
+
+.event-title{
+    font-size:18px;
+    font-weight:bold;
+    margin-bottom:8px;
+}
+
+.event-text{
+    color:#b6c1d1;
+    line-height:1.5;
+    font-size:14px;
+}
+
+.choices{
+    display:grid;
+    gap:10px;
+    margin-top:15px;
+}
+
+.choice{
+    border:1px solid #34445a;
+    background:#182131;
+    color:#fff;
+    padding:14px;
+    border-radius:11px;
+    text-align:left;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.choice:hover{
+    background:#223047;
+    border-color:#60a5fa;
+    transform:translateY(-1px);
+}
+
+.choice-title{
+    font-weight:bold;
+    margin-bottom:5px;
+}
+
+.choice-desc{
+    color:#9aa9bc;
+    font-size:13px;
+}
+
+button.main{
+    width:100%;
+    background:#2563eb;
+    border:0;
+    color:#fff;
+    padding:14px;
+    border-radius:11px;
+    cursor:pointer;
+    font-weight:bold;
+    margin-top:10px;
+}
+
+button.main:hover{
+    background:#1d4ed8;
+}
+
+.ministers{
+    display:grid;
+    gap:10px;
+}
+
+.person{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background:#151c28;
+    padding:13px;
+    border-radius:10px;
+}
+
+.person small{
+    color:#8fa0b4;
+}
+
+.log{
+    max-height:300px;
+    overflow:auto;
+}
+
+.log-item{
+    border-bottom:1px solid #222c3b;
+    padding:10px 0;
+    color:#b7c2d0;
+    font-size:13px;
+}
+
+.log-item:last-child{
+    border-bottom:0;
+}
+
+.progress{
+    height:9px;
+    background:#202938;
+    border-radius:10px;
+    overflow:hidden;
+    margin-top:8px;
+}
+
+.progress-bar{
+    height:100%;
+    width:0%;
+    background:#3b82f6;
+    transition:.4s;
+}
+
+.footer{
+    text-align:center;
+    color:#64748b;
+    font-size:12px;
+    padding:20px;
+}
+
+.modal{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.72);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    z-index:50;
+}
+
+.modal-box{
+    width:100%;
+    max-width:520px;
+    background:#10151f;
+    border:1px solid #334155;
+    border-radius:18px;
+    padding:22px;
+}
+
+.modal-box h2{
+    margin-top:0;
+}
+
+input{
+    width:100%;
+    background:#0b111a;
+    color:#fff;
+    border:1px solid #34445a;
+    padding:13px;
+    border-radius:10px;
+    outline:none;
+}
+
+input:focus{
+    border-color:#60a5fa;
+}
+
+.danger{
+    background:#3b1720 !important;
+    border-color:#7f1d1d !important;
+}
+
+@media(max-width:850px){
+    .stats{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .layout{
+        grid-template-columns:1fr;
+    }
+}
+
+@media(max-width:500px){
+    .container{
+        padding:12px;
+    }
+
+    .stats{
+        grid-template-columns:1fr 1fr;
+        gap:8px;
+    }
+
+    .stat{
+        padding:13px;
+    }
+
+    .stat-value{
+        font-size:20px;
+    }
+
+    .welcome h1{
+        font-size:24px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="header-inner">
+        <div class="logo">🏛️ <span>Президент</span></div>
+        <div class="day" id="day">День 1</div>
+    </div>
+</header>
+
+<div class="container">
+
+    <section class="welcome">
+        <h1>Президент Томас</h1>
+        <p>Добро пожаловать в симулятор управления государством.</p>
+    </section>
+
+    <section class="stats">
+
+        <div class="stat">
+            <div class="stat-name">💰 Государственный бюджет</div>
+            <div class="stat-value" id="budget">18.4 трлн ₽</div>
+            <div class="stat-small">доступные средства</div>
+        </div>
+
+        <div class="stat">
+            <div class="stat-name">👥 Население</div>
+            <div class="stat-value" id="population">146 млн</div>
+            <div class="stat-small">граждан</div>
+        </div>
+
+        <div class="stat">
+            <div class="stat-name">📊 Экономика</div>
+            <div class="stat-value" id="economy">72</div>
+            <div class="stat-small">индекс из 100</div>
+        </div>
+
+        <div class="stat">
+            <div class="stat-name">⭐ Доверие</div>
+            <div class="stat-value" id="trust">62%</div>
+            <div class="stat-small">общественная поддержка</div>
+        </div>
+
+    </section>
+
+    <div class="layout">
+
+        <main>
+
+            <section class="card">
+                <h2>📰 Событие дня</h2>
+
+                <div class="event">
+                    <div class="event-title" id="eventTitle">
+                        Первое заседание правительства
+                    </div>
+
+                    <div class="event-text" id="eventText">
+                        Вы вступили в должность. Перед вами несколько
+                        первых решений, которые определят направление
+                        развития страны.
+                    </div>
+
+                    <div class="choices" id="choices"></div>
+                </div>
+            </section>
+
+            <section class="card">
+                <h2>📜 Указ президента</h2>
+
+                <input
+                    id="decreeInput"
+                    placeholder="Например: Построить новую больницу..."
+                >
+
+                <button class="main" onclick="createDecree()">
+                    Подписать указ
+                </button>
+            </section>
+
+            <section class="card">
+                <h2>📋 Журнал событий</h2>
+                <div class="log" id="log"></div>
+            </section>
+
+        </main>
+
+        <aside>
+
+            <section class="card">
+                <h2>📈 Показатели</h2>
+
+                <div style="margin-bottom:15px">
+                    Экономика
+                    <div class="progress">
+                        <div class="progress-bar" id="economyBar"></div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom:15px">
+                    Доверие граждан
+                    <div class="progress">
+                        <div class="progress-bar" id="trustBar"></div>
+                    </div>
+                </div>
+
+                <div>
+                    Стабильность
+                    <div class="progress">
+                        <div class="progress-bar" id="stabilityBar"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="card">
+                <h2>👔 Правительство</h2>
+
+                <div class="ministers">
+
+                    <div class="person">
+                        <div>
+                            <b>Премьер-министр</b><br>
+                            <small>Алексей Орлов</small>
+                        </div>
+                        <span>🧑‍💼</span>
+                    </div>
+
+                    <div class="person">
+                        <div>
+                            <b>Министр финансов</b><br>
+                            <small>Мария Волкова</small>
+                        </div>
+                        <span>💼</span>
+                    </div>
+
+                    <div class="person">
+                        <div>
+                            <b>Министр здравоохранения</b><br>
+                            <small>Илья Соколов</small>
+                        </div>
+                        <span>🏥</span>
+                    </div>
+
+                    <div class="person">
+                        <div>
+                            <b>Министр строительства</b><br>
+                            <small>Дмитрий Лебедев</small>
+                        </div>
+                        <span>🏗️</span>
+                    </div>
+
+                </div>
+
+                <button class="main" onclick="openCabinet()">
+                    Созвать совещание
+                </button>
+            </section>
+
+            <section class="card">
+                <h2>⚙️ Государство</h2>
+
+                <button class="main" onclick="nextDay()">
+                    ☀️ Начать следующий день
+                </button>
+
+                <button
+                    class="main danger"
+                    onclick="resetGame()">
+                    🔄 Начать заново
+                </button>
+            </section>
+
+        </aside>
+
+    </div>
+
+    <div class="footer">
+        Президентский симулятор • Учебная игровая модель
+    </div>
+
+</div>
+
+
+<div class="modal" id="modal">
+    <div class="modal-box">
+        <h2>🏛️ Совещание правительства</h2>
+
+        <p style="color:#aab6c7;line-height:1.5">
+            Министры ждут ваших распоряжений. Выберите направление,
+            которое хотите обсудить.
+        </p>
+
+        <button class="choice" onclick="meeting('экономика')">
+            💰 Экономическая политика
+        </button>
+
+        <button class="choice" onclick="meeting('строительство')">
+            🏗️ Национальное строительство
+        </button>
+
+        <button class="choice" onclick="meeting('медицина')">
+            🏥 Здравоохранение
+        </button>
+
+        <button class="choice" onclick="meeting('образование')">
+            🎓 Образование
+        </button>
+
+        <button class="main" onclick="closeCabinet()">
+            Закрыть совещание
+        </button>
+    </div>
+</div>
+
+
+<script>
+
+let game = JSON.parse(localStorage.getItem("presidentGame")) || {
+
+    day:1,
+
+    budget:18.4,
+
+    population:146,
+
+    economy:72,
+
+    trust:62,
+
+    stability:70,
+
+    event:0,
+
+    log:[
+        "День 1: Президент Томас вступил в должность."
+    ]
+
+};
+
+
+const events = [
+
+{
+    title:"Первое заседание правительства",
+
+    text:"Перед правительством стоит вопрос: на что направить дополнительные государственные средства?",
+
+    choices:[
+        {
+            title:"🏥 Увеличить финансирование медицины",
+            desc:"Больницы получают дополнительные средства.",
+            budget:-0.7,
+            trust:4,
+            economy:1
+        },
+        {
+            title:"🏗️ Запустить строительство дорог",
+            desc:"Начинается крупная инфраструктурная программа.",
+            budget:-1.2,
+            trust:3,
+            economy:4
+        },
+        {
+            title:"💰 Сохранить средства бюджета",
+            desc:"Расходы государства остаются прежними.",
+            budget:0.5,
+            trust:-2,
+            economy:1
+        }
+    ]
+},
+
+{
+    title:"Рост цен",
+
+    text:"Министерство финансов сообщает о повышении стоимости некоторых товаров.",
+
+    choices:[
+        {
+            title:"💳 Субсидировать социально значимые товары",
+            desc:"Государство компенсирует часть расходов.",
+            budget:-0.8,
+            trust:4,
+            economy:-1
+        },
+        {
+            title:"📊 Ничего не менять",
+            desc:"Рынок продолжает работать самостоятельно.",
+            budget:0,
+            trust:-3,
+            economy:1
+        },
+        {
+            title:"🏭 Поддержать отечественное производство",
+            desc:"Средства направляются предприятиям.",
+            budget:-0.6,
+            trust:2,
+            economy:3
+        }
+    ]
+},
+
+{
+    title:"Новая больница",
+
+    text:"В одном из регионов подготовлен проект современной больницы.",
+
+    choices:[
+        {
+            title:"🏥 Построить больницу",
+            desc:"Проект получает государственное финансирование.",
+            budget:-1,
+            trust:5,
+            economy:1
+        },
+        {
+            title:"🔎 Провести дополнительную проверку",
+            desc:"Решение откладывается до следующего месяца.",
+            budget:0,
+            trust:0,
+            economy:0
+        }
+    ]
+},
+
+{
+    title:"Дороги регионов",
+
+    text:"Главы нескольких регионов просят увеличить финансирование ремонта дорог.",
+
+    choices:[
+        {
+            title:"🛣️ Выделить деньги",
+            desc:"Начинается ремонт региональных трасс.",
+            budget:-1.1,
+            trust:4,
+            economy:3
+        },
+        {
+            title:"💰 Сохранить текущий бюджет",
+            desc:"Финансирование остается прежним.",
+            budget:0,
+            trust:-1,
+            economy:0
+        }
+    ]
+},
+
+{
+    title:"Образование",
+
+    text:"Министерство образования предлагает обновить школы и цифровое оборудование.",
+
+    choices:[
+        {
+            title:"🎓 Модернизировать школы",
+            desc:"Школы получают новое оборудование.",
+            budget:-0.9,
+            trust:4,
+            economy:2
+        },
+        {
+            title:"📚 Увеличить зарплаты учителям",
+            desc:"Повышаются расходы на образование.",
+            budget:-0.7,
+            trust:5,
+            economy:1
+        },
+        {
+            title:"⏳ Отложить программу",
+            desc:"Проект переносится.",
+            budget:0.2,
+            trust:-2,
+            economy:0
+        }
+    ]
+},
+
+{
+    title:"Научный проект",
+
+    text:"Учёные предлагают профинансировать крупный исследовательский проект.",
+
+    choices:[
+        {
+            title:"🔬 Финансировать исследование",
+            desc:"Государство инвестирует в науку.",
+            budget:-0.5,
+            trust:3,
+            economy:4
+        },
+        {
+            title:"💰 Сократить финансирование",
+            desc:"Проект получает только базовое финансирование.",
+            budget:0.2,
+            trust:-1,
+            economy:0
+        }
+    ]
+},
+
+{
+    title:"Новая рабочая программа",
+
+    text:"Правительство предлагает программу поддержки малого бизнеса.",
+
+    choices:[
+        {
+            title:"🏪 Запустить программу",
+            desc:"Малый бизнес получает поддержку.",
+            budget:-0.6,
+            trust:3,
+            economy:4
+        },
+        {
+            title:"📋 Упростить правила для бизнеса",
+            desc:"Количество административных требований уменьшается.",
+            budget:0.1,
+            trust:2,
+            economy:3
+        }
+    ]
+}
+
+];
+
+
+function save(){
+
+    localStorage.setItem(
+        "presidentGame",
+        JSON.stringify(game)
+    );
+
+}
+
+
+function clamp(value,min,max){
+
+    return Math.max(min,Math.min(max,value));
+
+}
+
+
+function formatBudget(){
+
+    return game.budget.toFixed(1) + " трлн ₽";
+
+}
+
+
+function render(){
+
+    document.getElementById("day").textContent =
+        "День " + game.day;
+
+    document.getElementById("budget").textContent =
+        formatBudget();
+
+    document.getElementById("population").textContent =
+        game.population.toFixed(1) + " млн";
+
+    document.getElementById("economy").textContent =
+        Math.round(game.economy);
+
+    document.getElementById("trust").textContent =
+        Math.round(game.trust) + "%";
+
+
+    document.getElementById("economyBar").style.width =
+        game.economy + "%";
+
+    document.getElementById("trustBar").style.width =
+        game.trust + "%";
+
+    document.getElementById("stabilityBar").style.width =
+        game.stability + "%";
+
+
+    renderEvent();
+
+    renderLog();
+
+    save();
+
+}
+
+
+function renderEvent(){
+
+    const event =
+        events[game.event % events.length];
+
+    document.getElementById("eventTitle").textContent =
+        event.title;
+
+    document.getElementById("eventText").textContent =
+        event.text;
+
+
+    const choices =
+        document.getElementById("choices");
+
+    choices.innerHTML = "";
+
+
+    event.choices.forEach((choice,index)=>{
+
+        const button =
+            document.createElement("button");
+
+        button.className = "choice";
+
+        button.innerHTML = `
+            <div class="choice-title">
+                ${choice.title}
+            </div>
+
+            <div class="choice-desc">
+                ${choice.desc}
+            </div>
+        `;
+
+        button.onclick = () =>
+            choose(index);
+
+        choices.appendChild(button);
+
+    });
+
+}
+
+
+function choose(index){
+
+    const event =
+        events[game.event % events.length];
+
+    const choice =
+        event.choices[index];
+
+
+    game.budget += choice.budget || 0;
+
+    game.trust += choice.trust || 0;
+
+    game.economy += choice.economy || 0;
+
+
+    game.economy =
+        clamp(game.economy,0,100);
+
+    game.trust =
+        clamp(game.trust,0,100);
+
+
+    game.stability =
+        clamp(
+            game.stability +
+            Math.round((choice.trust || 0)/2),
+            0,
+            100
+        );
+
+
+    if(game.budget < 0){
+        game.budget = 0;
+    }
+
+
+    addLog(
+        "День " +
+        game.day +
+        ": " +
+        choice.title.replace(/[^\p{L}\p{N}\s]/gu,"").trim()
+    );
+
+
+    render();
+
+}
+
+
+function nextDay(){
+
+    game.day++;
+
+    game.event++;
+
+    /*
+       Небольшая ежедневная экономика
+    */
+
+    const income =
+        0.12 +
+        (game.economy / 1000);
+
+    game.budget += income;
+
+
+    /*
+       Население постепенно меняется
+    */
+
+    if(game.trust > 60){
+        game.population += 0.01;
+    }
+    else if(game.trust < 35){
+        game.population -= 0.01;
+    }
+
+
+    /*
+       Случайное событие
+    */
+
+    if(Math.random() < 0.35){
+
+        const random =
+            Math.floor(Math.random()*3);
+
+        if(random === 0){
+
+            game.trust =
+                clamp(game.trust+2,0,100);
+
+            addLog(
+                "День " +
+                game.day +
+                ": правительство получило положительные отзывы граждан."
+            );
+
+        }
+
+        if(random === 1){
+
+            game.economy =
+                clamp(game.economy-2,0,100);
+
+            addLog(
+                "День " +
+                game.day +
+                ": экономическая активность немного снизилась."
+            );
+
+        }
+
+        if(random === 2){
+
+            game.stability =
+                clamp(game.stability+2,0,100);
+
+            addLog(
+                "День " +
+                game.day +
+                ": обстановка в регионах стабилизировалась."
+            );
+
+        }
+
+    }
+
+
+    addLog(
+        "Начался новый день."
+    );
+
+
+    render();
+
+}
+
+
+function addLog(text){
+
+    game.log.unshift(text);
+
+    if(game.log.length > 40){
+
+        game.log =
+            game.log.slice(0,40);
+
+    }
+
+}
+
+
+function renderLog(){
+
+    const log =
+        document.getElementById("log");
+
+    log.innerHTML = "";
+
+    game.log.forEach(item=>{
+
+        const div =
+            document.createElement("div");
+
+        div.className = "log-item";
+
+        div.textContent = item;
+
+        log.appendChild(div);
+
+    });
+
+}
+
+
+function createDecree(){
+
+    const input =
+        document.getElementById("decreeInput");
+
+    const text =
+        input.value.trim();
+
+
+    if(!text){
+
+        alert("Введите текст указа.");
+
+        return;
+
+    }
+
+
+    addLog(
+        "📜 Подписан указ: " + text
+    );
+
+
+    /*
+       Небольшой эффект от указа
+    */
+
+    game.trust =
+        clamp(game.trust+1,0,100);
+
+    game.budget -= 0.05;
+
+    if(game.budget < 0){
+        game.budget = 0;
+    }
+
+
+    input.value = "";
+
+    render();
+
+}
+
+
+function openCabinet(){
+
+    document.getElementById("modal").style.display =
+        "flex";
+
+}
+
+
+function closeCabinet(){
+
+    document.getElementById("modal").style.display =
+        "none";
+
+}
+
+
+function meeting(type){
+
+    const messages = {
+
+        экономика:
+            "Министр финансов предложил следить за бюджетом и поддерживать экономическую активность.",
+
+        строительство:
+            "Министр строительства представил список региональных инфраструктурных проектов.",
+
+        медицина:
+            "Министр здравоохранения предложил модернизировать больницы и поликлиники.",
+
+        образование:
+            "Министр образования предложил обновить школы и расширить программы подготовки специалистов."
+
+    };
+
+
+    addLog(
+        "Совещание: " +
+        messages[type]
+    );
+
+
+    game.trust =
+        clamp(game.trust+1,0,100);
+
+
+    closeCabinet();
+
+    render();
+
+}
+
+
+function resetGame(){
+
+    if(
+        confirm(
+            "Начать игру заново? Текущий прогресс будет удалён."
+        )
+    ){
+
+        localStorage.removeItem(
+            "presidentGame"
+        );
+
+        location.reload();
+
+    }
+
+}
+
+
+render();
+
+</script>
+
+</body>
+</html>
